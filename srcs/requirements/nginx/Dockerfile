@@ -1,14 +1,16 @@
 FROM debian:bullseye
 
-RUN apt-get update -y
-RUN apt-get upgrade -y
-RUN apt-get install nginx openssl -y
+RUN apt-get update && apt-get install -y nginx openssl
 
-COPY ./config/nginx.conf /etc/nginx/sites-enabled/default.conf
-
-RUN openssl req -x509 -nodes \
-    -out /etc/ssl/avancoll.42.fr.crt \
-    -keyout /etc/ssl/avancoll.42.fr.key \
+RUN mkdir -m 775 /etc/nginx/ssl
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+	-keyout /etc/nginx/ssl/avancoll.key \
+	-out /etc/nginx/ssl/avancoll.crt \
     -subj "/C=BE/ST=Belgium/L=Brussels/O=42/OU=19/CN=avancoll.42.fr/UID=avancoll"
 
-ENTRYPOINT [ "nginx", "-g", "daemon off;" ]
+COPY tools/default /etc/nginx/sites-available/default
+COPY conf/nginx.conf /etc/nginx/nginx
+
+EXPOSE 443
+
+CMD ["nginx", "-g", "daemon off;"]
