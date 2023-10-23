@@ -4,7 +4,7 @@ services:
     mariadb:
       container_name: mariadb
       build: requirements/mariadb
-      image: mariadb:avancoll
+      image: mariadb
       networks:
         - docker_network
       volumes:
@@ -15,7 +15,7 @@ services:
     wordpress:
       container_name: wordpress
       build: requirements/wordpress
-      image: wordpress:avancoll
+      image: wordpress
       depends_on: 
         - mariadb
       networks:
@@ -28,7 +28,7 @@ services:
     nginx:
       container_name: nginx
       build: requirements/nginx
-      image: nginx:avancoll
+      image: nginx
       depends_on:
         - wordpress
       networks:
